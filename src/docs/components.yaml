@@ -19,6 +19,7 @@ components:
         - name
         - email
         - password
+        - confirmPassword
       properties:
         name:
           type: string
@@ -29,7 +30,9 @@ components:
         password:
           type: string
           description: The password of the user
-
+        confirmPassword:
+          type: string
+          description : user confirm password 
     UpdateUser:
       type: object
       properties:
