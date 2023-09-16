@@ -5,10 +5,12 @@ import { HttpCode } from '../../utils/httpCode';
 import { TokenEnum } from '../../constants/constants';
 import { sendMail } from '../../utils/sendMail';
 import path from 'path';
+import bcrypt from 'bcrypt';
+
 import fs from 'fs';
 import logger from '../../utils/logger';
 import { Types } from 'mongoose';
-import IUser from '../../database/mongodb/models/user.model';
+import IUser, { User } from '../../database/mongodb/models/user.model';
 
 const login = async (email: string, password: string) => {
   // create options object to filter data
@@ -309,18 +311,41 @@ const avatarUpload = async (id: Types.ObjectId, filename: string) => {
   return updatedUser;
 };
 
-const getAllUsers = async (name: string, page: number, pageSize: number) => {
+const getAllUsers = async (role:string,name: string, page: number, pageSize: number) => {
   // create options object to filter data
   const options = {
     page: page,
     limit: pageSize,
   };
-
+  
+  
+  if(!role){
+    role='student'
+  } 
+  
+  const condition={role}
+  if(role) condition.role=role
   // get docs and meta
-  const { docs, ...meta } = await UserRepository.getAll({}, options, { name });
-
+  const { docs, ...meta } = await UserRepository.getAll(condition, options, { name });
+   const count =await User.aggregate([
+    {
+        $match: {
+            role: role
+        }
+    },
+    {
+        $group: {
+            _id: null,
+            count: { $sum: 1 }
+        }
+    }
+])
   // return data
-  return { docs, meta };
+  let counter=0
+  if(count[0]?.count){
+    counter=count[0]?.count
+  }
+  return { docs, meta,count:counter };
 };
 
 const getUserById = async (id: Types.ObjectId) => {
@@ -338,6 +363,9 @@ const getUserById = async (id: Types.ObjectId) => {
 
 const createUser = async (item: IUser) => {
   // save the user to database
+  if(item.password!==''){
+    item.password= await JwtHelper.PasswordHashing(item.password);
+  }
   const createdUser = await UserRepository.create(item);
 
   // return data
@@ -352,9 +380,19 @@ const updateUser = async (id: Types.ObjectId, item: IUser) => {
   if (!user) {
     throw new ErrorHandler('user not found!', HttpCode.NOT_FOUND);
   }
+  
+  
 
   // update the user
-  const updatedUser = await UserRepository.edit(id, item);
+  let updatedItems:any=item
+ 
+  if(item.password==''){
+    const {password,...filteredData}=item
+    updatedItems=filteredData
+  }else{
+    updatedItems.password= await JwtHelper.PasswordHashing(updatedItems.password);
+  }
+  const updatedUser = await UserRepository.edit(id, updatedItems);
 
   // return data
   return updatedUser;

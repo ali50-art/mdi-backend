@@ -4,10 +4,9 @@ import APIFeatures from '../../../utils/apiFeatures';
 import IUser, { User } from '../models/user.model';
 
 const getAll = async (condition: object, paging: pagingObj, query: object) => {
-  let findAllQuery = User.find({ ...condition });
+  let findAllQuery = User.find({ ...condition }).select({name:1,email:1,avatar:1,phone:1,status:1})
 
   const features = new APIFeatures(findAllQuery, query)
-    .filter()
     .sort()
     .limitFields()
     .search(['name']);

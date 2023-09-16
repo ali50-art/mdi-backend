@@ -189,8 +189,10 @@ const avatarUpload: RequestHandler = AsyncHandler(
 // @access  Private/Admin
 const getAllUsers: RequestHandler = AsyncHandler(
   async (req: Request, res: Response): Promise<void> => {
-    const { name, page, pageSize } = req?.query;
+    const { role,name, page, pageSize } = req?.query;
+    
     const result = await UserService.getAllUsers(
+      String(role|| ''),
       String(name || ''),
       Number(page || DEFAULT_CURRENT_PAGE),
       Number(pageSize || DEFAULT_PAGE_SIZE),

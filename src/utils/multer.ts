@@ -33,3 +33,34 @@ export const multerConfig = {
     }
   },
 } as Options;
+export const multerConfigOfferCategory = {
+  dest: resolve(__dirname, '..', '..', 'public', 'offerCategory'),
+  storage: diskStorage({
+    destination: (request, file, callback) => {
+      callback(null, resolve(__dirname, '..', '..', 'public', 'offerCategory'));
+    },
+    filename: (request, file, callback) => {
+      const filename =
+        path.parse(file.originalname).name +
+        '_' +
+        Date.now() +
+        '_' +
+        Math.round(Math.random() * 1e9) +
+        path.extname(file.originalname);
+
+      callback(null, filename);
+    },
+  }),
+  limits: {
+    fileSize: Number(process.env.AVATAR_SIZE_IN_MEGABYTE) * MEGABYTE_IN_BYTE,
+  },
+  fileFilter: (request, file, callback) => {
+    const formats = ['image/jpeg', 'image/jpg', 'image/png'];
+
+    if (formats.includes(file.mimetype)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Only .png, .jpg and .jpeg format allowed!'));
+    }
+  },
+} as Options;

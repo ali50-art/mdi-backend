@@ -8,16 +8,13 @@ passport.use(
     new GoogleStrategy({
         clientID:"872932573146-714nbgm5slutbcdds8etdvj72dcvnlf6.apps.googleusercontent.com",
         clientSecret:"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",
-        callbackURL:'/api/auth/google/callback',
-        scope:["profile","email"]
+        callbackURL: "/auth/google/callback",
+			  scope: ["profile", "email"],
     },
     async (accessToken:any,refreshToken:any,profile:any,done:any)=>{
         // Check if the user with the given Google ID exists
-        
-        
-
-    
       let user = await User.findOne({ googleId: profile.id});
+      
       // If the user doesn't exist, create a new user
       if (!user) {
         user = await User.create({ googleId: profile.id,email:profile.email,name:profile.displayName });
@@ -27,9 +24,10 @@ passport.use(
     }
     )
 );
-passport.serializeUser((user:any,done)=>{
-    done(null,user)
-})
-passport.deserializeUser((user:any,done)=>{
-    done(null,user)
-})
+passport.serializeUser((user, done) => {
+	done(null, user);
+});
+
+passport.deserializeUser((user, done) => {
+	done(null, user);
+});

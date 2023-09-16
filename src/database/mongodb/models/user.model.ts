@@ -10,10 +10,11 @@ export default interface IUser extends Document {
   email: string;
   password: string;
   avatar: string;
+  phone:string;
   coverImg:string;
   location:string;
   googleId:string;
-  role: string;
+  role: string
   status:boolean;
   hasOffer:boolean;
   createdAt?: Date;
@@ -29,6 +30,9 @@ const schema = new Schema<IUser>(
     email: {
       type: Schema.Types.String,
       
+    },
+    phone:{
+      type: Schema.Types.String,
     },
     password: {
       type: Schema.Types.String,

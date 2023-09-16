@@ -1,5 +1,5 @@
 import express, { Express } from 'express';
-import session from 'express-session';
+import cookieSession from 'cookie-session';
 import path from 'path';
 import cors from 'cors';
 import './utils/passport'
@@ -16,6 +16,7 @@ import mongoSanitize from 'express-mongo-sanitize';
 import swaggerUI from 'swagger-ui-express';
 import swaggerSpec from './docs/config';
 import routes from './routes';
+import googleAuth from './routes/v1/googleAuth'
 
 // Config Env Path
 dotenv.config();
@@ -26,15 +27,20 @@ const app: Express = express();
 // cors options
 const corsOptions = {
   origin: process.env.CORS_ORIGIN,
+  methods: "GET,POST,PUT,DELETE",
   optionsSuccessStatus: 200,
   credentials: true,
 };
 
 
-// Configure session middleware
-app.use(session({ secret: 'your-secret-key', resave: true, saveUninitialized: true }));
+app.use(
+	cookieSession({
+		name: "session",
+		keys: ["cyberwolve"],
+		maxAge: 24 * 60 * 60 * 100,
+	})
+);
 
-// Initialize Passport.js
 app.use(passport.initialize());
 app.use(passport.session());
 
@@ -51,8 +57,10 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, '..', 'public')));
 
 // Routes Config
+
 app.use('/api', routes);
 app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerSpec));
+app.use('/auth',googleAuth)
 
 // Error Middleware
 app.use(notFound);

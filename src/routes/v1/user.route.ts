@@ -26,14 +26,7 @@ router.get('/logout', Authorization.Authenticated, UserController.logout);
 
 router.get('/refresh-token', UserController.refreshToken);
 
-// Set up routes for Google OAuth authentication
-router.get('/auth/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
 
-router.get(
-  '/auth/google/callback',
-  passport.authenticate('google', {successRedirect:'http://localhost:3001', failureRedirect: process.env.CLIENT_URL }),
-  
-);
 router.get('/login/success',userController.loginWithGoogle)
 
 router.post(

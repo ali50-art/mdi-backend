@@ -32,6 +32,8 @@ const getById: RequestHandler = AsyncHandler(async (req: Request, res: Response)
 // @route   POST /api/todos
 // @access  Private
 const create: RequestHandler = AsyncHandler(async (req: Request, res: Response): Promise<void> => {
+  console.log('hello');
+  
   const result = await TodoService.create(req?.user?.id, req?.body);
   res.status(HttpCode.CREATED).json({
     success: true,

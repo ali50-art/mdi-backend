@@ -1,9 +1,8 @@
 import express from 'express';
 import userRoutes from './v1/user.route';
-import todoRoutes from './v1/todo.route';
-
+import offerCategoryRoutes from './v1/offerCategory.route'
 const router = express.Router();
 
-router.use('/', userRoutes, todoRoutes);
+router.use('/', userRoutes, offerCategoryRoutes);
 
 export default router;
