@@ -11,7 +11,8 @@ const Authenticated = AsyncHandler(async (req: Request, res: Response, next: Nex
   // const { refreshToken } = req?.cookies;
 
   const authToken = req?.headers?.authorization;
-  const token = authToken;
+  // const token = authToken.split(' ')[1];
+  const token = authToken
 
   if (!token) {
     return next(new ErrorHandler('Login first to access this resource.', HttpCode.UNAUTHORIZED));

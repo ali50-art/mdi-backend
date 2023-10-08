@@ -209,7 +209,7 @@ const getUserProfile = async (id: Types.ObjectId) => {
   return user;
 };
 
-const updateProfile = async (id: Types.ObjectId, name: string, email: string) => {
+const updateProfile = async (id: Types.ObjectId, name: string, email: string,age:number,location:string,phone:string,city:string) => {
   // get user by his id
   const user = await UserRepository.getOneByQuery({ _id: id });
 
@@ -224,10 +224,26 @@ const updateProfile = async (id: Types.ObjectId, name: string, email: string) =>
   // set the new email  to user object if new email not undefined
   if (email) user.set('email', email);
 
+  // set the new age  to user object if new age not undefined
+  if(age) user.set('age',age)
+
+  // set the new location  to User object if new location not undefined
+  if(location) user.set('location',location)
+
+  // set the new phone  to User object if new phone not undefined
+  if(phone) user.set('phone',phone)
+
+  // set the new city to User object if new city not undefined
+  if(city) user.set('city',city)
+
   // crate user object
   const updatedUser = {
     name,
     email,
+    age,
+    location,
+    phone,
+    city
   };
 
   // update user

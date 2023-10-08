@@ -17,6 +17,8 @@ import swaggerUI from 'swagger-ui-express';
 import swaggerSpec from './docs/config';
 import routes from './routes';
 import googleAuth from './routes/v1/googleAuth'
+import Stripe from 'stripe';
+const stripe = require('stripe')('sk_test_VePHdqKTYQjKNInc7u56JBrQ')
 
 // Config Env Path
 dotenv.config();
@@ -57,7 +59,31 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, '..', 'public')));
 
 // Routes Config
-
+app.post('/create-checkout-session', async (req, res) => {
+	
+	
+	const session = await stripe.checkout.sessions.create({
+	  line_items: [
+		{
+		  price_data: {
+			currency: 'eur',
+			product_data: {
+			  name: req.body.data.name,
+			},
+			unit_amount: req.body.data.price*100 ,
+		  },
+		  quantity: 1,
+		},
+	  ],
+	  mode: 'payment',
+	  success_url: `${process.env.CLIENT_URL}/checkout-success`,
+	  cancel_url:  `${process.env.CLIENT_URL}/offer-manuel`
+	});
+  
+	res.send({
+		url:session.url
+	});
+  });
 app.use('/api', routes);
 app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerSpec));
 app.use('/auth',googleAuth)

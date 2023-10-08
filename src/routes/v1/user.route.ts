@@ -20,7 +20,7 @@ import userController from '../../controllers/v1/user.controller';
 
 router.post('/login', limiter, validator(UserValidator.loginSchema), UserController.login);
 
-router.post('/register', limiter, validator(UserValidator.registerSchema), UserController.register);
+router.post('/register', limiter, UserController.register);
 
 router.get('/logout', Authorization.Authenticated, UserController.logout);
 
@@ -46,7 +46,7 @@ router.get('/profile', Authorization.Authenticated, UserController.getProfile);
 router.put(
   '/profile-update',
   Authorization.Authenticated,
-  validator(UserValidator.updateProfile),
+  
   UserController.updateProfile,
 );
 

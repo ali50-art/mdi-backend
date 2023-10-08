@@ -13,6 +13,9 @@ export default interface IUser extends Document {
   phone:string;
   coverImg:string;
   location:string;
+  codePostal:string;
+  city:string;
+  age:number;
   googleId:string;
   role: string
   status:boolean;
@@ -48,7 +51,15 @@ const schema = new Schema<IUser>(
     },
     location:{
       type: Schema.Types.String,
-      
+    },
+    codePostal:{
+      type: Schema.Types.String,
+    },
+    city:{
+      type: Schema.Types.String,
+    },
+    age:{
+      type: Schema.Types.Number,
     },
     googleId:{
       type: Schema.Types.String,

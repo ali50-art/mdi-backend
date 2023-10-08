@@ -150,8 +150,8 @@ const getProfile: RequestHandler = AsyncHandler(
 // @access  Private
 const updateProfile: RequestHandler = AsyncHandler(
   async (req: Request, res: Response): Promise<void> => {
-    const { name, email } = req?.body;
-    const result = await UserService.updateProfile(req?.user?.id, name, email);
+    const { name, email,age,location,phone,city } = req?.body;
+    const result = await UserService.updateProfile(req?.user?.id, name, email,age,location,phone,city);
     res.status(HttpCode.OK).json({ success: true, message: '', data: result });
   },
 );

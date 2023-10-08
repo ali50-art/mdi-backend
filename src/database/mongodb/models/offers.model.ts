@@ -7,7 +7,9 @@ export const USER_COLLECTION_NAME = 'offers';
 
 export default interface IOffer extends Document {
   name: string;
-  categoryId:Schema.Types.ObjectId;
+  price:number;
+  category:Schema.Types.String;
+  offerDetails:[string];
   photo: string;
   status:boolean;
   createdAt?: Date;
@@ -19,9 +21,14 @@ const schema = new Schema<IOffer>(
     name: {
       type: Schema.Types.String,
     },
-    categoryId: {
-      type: Schema.Types.ObjectId,
-      ref: 'OfferCategory',
+    price:{
+      type: Schema.Types.Number
+    },
+    offerDetails:[{
+      type:Schema.Types.String
+    }],
+    category: {
+      type: Schema.Types.String,
     },
     status:{
       type:Schema.Types.Boolean,
