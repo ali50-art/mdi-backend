@@ -34,7 +34,7 @@ router.post(
   validator(UserValidator.forgotPasswordSchema),
   UserController.forgotPassword,
 );
-
+router.get('/teacher/:boite',UserController.getAllTeachers)
 router.put(
   '/reset-password/',
   validator(UserValidator.resetPasswordSchema),
@@ -78,17 +78,30 @@ router
   );
 
 router
+  .route('/teacher')
+  .post(
+    Authorization.Authenticated,
+    AuthorizeRole.AuthorizeRole([RolesEnum.admin,RolesEnum.teacher]),
+    UserController.getUserByData,
+  )
+router
+  .route('/student/:id')
+  .put( Authorization.Authenticated,
+    AuthorizeRole.AuthorizeRole([RolesEnum.admin,RolesEnum.teacher]),
+    UserController.updateStudent)
+router
   .route('/admin/users/:id')
   .get(
     Authorization.Authenticated,
-    AuthorizeRole.AuthorizeRole([RolesEnum.admin]),
+    AuthorizeRole.AuthorizeRole([RolesEnum.admin,RolesEnum.teacher]),
     UserController.getUserById,
   )
   .put(
     Authorization.Authenticated,
-    AuthorizeRole.AuthorizeRole([RolesEnum.admin]),
+    AuthorizeRole.AuthorizeRole([RolesEnum.admin,RolesEnum.teacher]),
     UserController.updateUser,
   )
+  
   .delete(
     Authorization.Authenticated,
     AuthorizeRole.AuthorizeRole([RolesEnum.admin]),

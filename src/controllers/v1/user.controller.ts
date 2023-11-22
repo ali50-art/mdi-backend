@@ -141,7 +141,15 @@ const resetPassword: RequestHandler = AsyncHandler(
 const getProfile: RequestHandler = AsyncHandler(
   async (req: Request, res: Response): Promise<void> => {
     const result = await UserService.getUserProfile(req?.user?.id);
-    res.status(HttpCode.OK).json({ success: true, message: '', data: result });
+    const filteredUser={
+      ...result.user,
+    }
+    const newResult={
+      ...filteredUser?._doc,
+      nbHoures:result?.nbHoures,
+      livrets:result?.livrets
+    }
+    res.status(HttpCode.OK).json({ success: true, message: '', data: newResult });
   },
 );
 
@@ -150,8 +158,8 @@ const getProfile: RequestHandler = AsyncHandler(
 // @access  Private
 const updateProfile: RequestHandler = AsyncHandler(
   async (req: Request, res: Response): Promise<void> => {
-    const { name, email,age,location,phone,city } = req?.body;
-    const result = await UserService.updateProfile(req?.user?.id, name, email,age,location,phone,city);
+    const { name, email,age,location,phone,city,status } = req?.body;
+    const result = await UserService.updateProfile(req?.user?.id, name, email,age,location,phone,city,status);
     res.status(HttpCode.OK).json({ success: true, message: '', data: result });
   },
 );
@@ -194,6 +202,19 @@ const getAllUsers: RequestHandler = AsyncHandler(
     const result = await UserService.getAllUsers(
       String(role|| ''),
       String(name || ''),
+      Number(page || DEFAULT_CURRENT_PAGE),
+      Number(pageSize || DEFAULT_PAGE_SIZE),
+    );
+    res.status(HttpCode.OK).json({ success: true, message: '', data: result });
+  },
+);
+
+const getAllTeachers: RequestHandler = AsyncHandler(
+  async (req: Request, res: Response): Promise<void> => {
+    const {  page, pageSize } = req?.query;
+    const {boite}=req.params
+    const result = await UserService.getAllTeachers(
+      String(boite||''),
       Number(page || DEFAULT_CURRENT_PAGE),
       Number(pageSize || DEFAULT_PAGE_SIZE),
     );
@@ -250,6 +271,26 @@ const deleteUser: RequestHandler = AsyncHandler(
   },
 );
 
+const getUserByData: RequestHandler = AsyncHandler(
+  async (req: Request, res: Response): Promise<void> => {
+    const data = req.body;
+    const result = await UserService.getUserByData(data);
+    res
+      .status(HttpCode.OK)
+      .json({ success: true, message: 'User retuened successfully', data: result });
+  },
+);
+
+const updateStudent:RequestHandler=AsyncHandler(async (req: Request, res: Response): Promise<void> => {
+  const data = req.body;
+  const {id}=req.params
+
+  const result = await UserService.updateStudent(new Types.ObjectId(id),data);
+  res
+    .status(HttpCode.OK)
+    .json({ success: true, message: 'User updated successfully', data: result });
+},)
+
 export default {
   login,
   loginFailed,
@@ -264,8 +305,11 @@ export default {
   updateUserPassword,
   avatarUpload,
   getAllUsers,
+  getUserByData,
+  getAllTeachers,
   getUserById,
   createUser,
   updateUser,
+  updateStudent,
   deleteUser,
 };

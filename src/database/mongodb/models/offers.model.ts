@@ -10,6 +10,7 @@ export default interface IOffer extends Document {
   price:number;
   category:Schema.Types.String;
   offerDetails:[string];
+  nbHoures:number;
   photo: string;
   status:boolean;
   createdAt?: Date;
@@ -29,6 +30,9 @@ const schema = new Schema<IOffer>(
     }],
     category: {
       type: Schema.Types.String,
+    },
+    nbHoures:{
+      type:Schema.Types.Number
     },
     status:{
       type:Schema.Types.Boolean,

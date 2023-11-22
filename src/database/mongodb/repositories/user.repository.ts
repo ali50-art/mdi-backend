@@ -37,11 +37,17 @@ const edit = async (id: Types.ObjectId, item: object) =>
 
 const remove = async (id: Types.ObjectId) => await User.findByIdAndDelete(id);
 
+const getUserByData=async (data:any)=>{
+  const user=await User.findOne(data)
+  if(!user) throw new Error('user not found !')
+  return user
+}
 export default {
   getAll,
   getById,
   getByQuery,
   getOneByQuery,
+  getUserByData,
   create,
   edit,
   remove,

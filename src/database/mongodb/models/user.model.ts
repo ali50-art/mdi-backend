@@ -15,6 +15,7 @@ export default interface IUser extends Document {
   location:string;
   codePostal:string;
   city:string;
+  boite:string;
   age:number;
   googleId:string;
   role: string
@@ -73,6 +74,9 @@ const schema = new Schema<IUser>(
     status:{
       type:Schema.Types.Boolean,
       default:true
+    },
+    boite:{
+      type:Schema.Types.String
     },
     hasOffer:{
       type:Schema.Types.Boolean,
