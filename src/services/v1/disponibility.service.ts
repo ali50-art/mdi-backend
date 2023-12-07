@@ -5,18 +5,26 @@ import UserRepository from '../../database/mongodb/repositories/user.repository'
 import { Types } from 'mongoose';
 import IDisponibility from '../../database/mongodb/models/disponibility.model'
 
-const getAll = async (userId: Types.ObjectId, page: number, pageSize: number) => {
+const getAll = async (role:string,userId: Types.ObjectId, page: number, pageSize: number) => {
   // create options object to filter data
   const options = {
     page: page,
     limit: pageSize,
   };
-  
-  // get docs and meta
-  const { docs, ...meta } = await disponibility.getAll({userId}, options, {});
-
+  if(role=='student'){
+    // get docs and meta
+  const { docs, ...meta } = await disponibility.getAll({userId,status:true}, options, {});
   // return data
   return { docs, meta };
+  }else{
+    // get docs and meta
+  const { docs, ...meta } = await disponibility.getAll({userId}, options, {});
+  // return data
+  return { docs, meta };
+  }
+  
+
+  
 
 };
 
@@ -28,7 +36,7 @@ const getById = async (userId: Types.ObjectId, id: Types.ObjectId) => {
   };
 
   // get item by options
-  const todo = await disponibility.getOneByQuery(options);
+  const todo = await disponibility.getOneByQuery(options,"","userId");
 
   // throw error if item not found
   if (!todo) {
@@ -38,12 +46,66 @@ const getById = async (userId: Types.ObjectId, id: Types.ObjectId) => {
   // return data
   return todo;
 };
+const calculateIntervals = (startDate:any, endDate:any) => {
+  const intervalInMinutes = 50;
 
+  // Calculate the difference in milliseconds
+  const timeDifference = Math.abs(endDate - startDate);
+
+  // Calculate the number of intervals
+  const numberOfIntervals = Math.ceil(timeDifference / (intervalInMinutes * 60 * 1000));
+
+  return numberOfIntervals;
+};
 const create = async (item: IDisponibility) => {
   // create item
+  const date1 = new Date(item.start);
+  const date2 = new Date(item.end);
 
-  const createdoffer = await disponibility.create(item);
+// Calculate the difference in milliseconds
+const timeDifference = date2.getTime() - date1.getTime();
 
+// Calculate the difference in days
+const dayDifference = timeDifference / (1000 * 60 * 60 * 24);
+let createdoffer:any
+if(dayDifference==0){
+    createdoffer=await disponibility.create(item);
+    return createdoffer
+  }
+  for(let i=0;i<dayDifference;i++){
+    const startDate = new Date(item.start);
+
+    // Add the specified number of days to the date
+    
+    startDate.setDate(startDate.getDate() + i);
+    
+    
+    const endDate=new Date(item.start)
+    endDate.setDate(endDate.getDate() + i);
+    const end=new Date(item.end)
+    endDate.setHours(end.getHours());
+    endDate.setMinutes(end.getMinutes());
+    endDate.setSeconds(end.getSeconds());
+    const numberOfIntervals = calculateIntervals(startDate, endDate);
+    for(let j=0;j<numberOfIntervals;j++){
+      const newStart=new Date(startDate)
+      newStart.setMinutes(startDate.getMinutes() + j * 50);
+      const newEndDate=new Date(startDate)
+      newEndDate.setMinutes(newEndDate.getMinutes() + (j+1) * 50);
+
+      const el={
+        title:item.title,
+        allDay:false,
+        description:'',
+        userId:item.userId,
+        start:newStart,
+        end:newEndDate
+      }
+      createdoffer=await disponibility.create(el);
+    }
+    
+  }
+  
   // return data
   return createdoffer;
 };

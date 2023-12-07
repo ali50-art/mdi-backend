@@ -4,7 +4,7 @@ import APIFeatures from '../../../utils/apiFeatures';
 import IOfferCategory, { Offer} from '../models/offers.model';
 
 const getAll = async (condition: object, paging: pagingObj, query: object) => {
-  let findAllQuery = Offer.find({ ...condition });
+  let findAllQuery = Offer.find({ ...condition })
 
   const features = new APIFeatures(findAllQuery, query)
     .filter()

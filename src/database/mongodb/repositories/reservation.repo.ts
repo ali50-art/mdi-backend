@@ -4,7 +4,11 @@ import APIFeatures from '../../../utils/apiFeatures';
 import IReservation, { ReservationModel} from '../models/reservation.model';
 
 const getAll = async (condition: object, paging: pagingObj, query: object) => {
-  let findAllQuery = ReservationModel.find({ ...condition });
+  let findAllQuery = ReservationModel.find({ ...condition }).populate([{
+    path:'teacherId'
+  },{
+    path:'commentId'
+  }]);
 
   const features = new APIFeatures(findAllQuery, query)
     .filter()
@@ -36,7 +40,9 @@ const create = async (item: object) => await ReservationModel.create(item);
 const edit = async (id: Types.ObjectId, item: object) =>
   await ReservationModel.findByIdAndUpdate(id, item, { new: true });
 
-const remove = async (id: Types.ObjectId) => await ReservationModel.findByIdAndDelete(id);
+const remove = async (id: Types.ObjectId) => {
+  return await ReservationModel.updateOne({_id:id},{$set:{isCancel:true,calendar:"Business"}});
+}
 
 export default {
   getAll,

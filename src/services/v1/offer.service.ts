@@ -13,8 +13,11 @@ const getAll = async (category: string, page: number, pageSize: number) => {
   };
 
   // get docs and meta
-  const { docs, ...meta } = await offer.getAll({}, options, { category });
-
+  
+  const result=await offer.getAll({}, options, { category });
+  console.log('result : ',result);
+  
+  const { docs, ...meta } = result
   // return data
   return { docs, meta };
 };

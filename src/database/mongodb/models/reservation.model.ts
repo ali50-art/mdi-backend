@@ -14,6 +14,9 @@ export default interface IReservation extends Document {
   calendar:string;
   title:string;
   description:string;
+  isCancel:boolean;
+  isCommended:boolean;
+  commentId:Schema.Types.ObjectId;
   status:boolean;
   createdAt?: Date;
   updatedAt?: Date;
@@ -45,6 +48,17 @@ const schema = new Schema<IReservation>(
     calendar:{
         type:Schema.Types.String,
         default:'Holiday'
+    },
+    isCancel:{
+      type:Schema.Types.Boolean,
+      default:false
+    },
+    isCommended:{
+      type:Schema.Types.Boolean,
+      default:false
+    },
+    commentId:{
+      type:Schema.Types.ObjectId
     },
     status:{
       type:Schema.Types.Boolean,

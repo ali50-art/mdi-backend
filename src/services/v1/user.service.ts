@@ -304,6 +304,7 @@ const getUserByData=async(data:any)=>{
     "avatar": user.avatar,
     "coverImg": user.coverImg,
     "role": user.role,
+    "location":user.location,
     "status": user.status,
     "hasOffer": user.hasOffer,
     "createdAt": user.createdAt,
@@ -435,16 +436,27 @@ const getAllTeachers = async (boite:string, page: number, pageSize: number) => {
   return { docs, meta };
 };
 const getUserById = async (id: Types.ObjectId) => {
-  // get user by is id
-  const user = await UserRepository.getById(id);
-
-  // throw error if user not found
-  if (!user) {
-    throw new ErrorHandler('user not found!', HttpCode.NOT_FOUND);
+  const user:any=await UserRepository.getById(id)
+  const livrets=await Livret.find({studentId:user._id}).populate([{
+    path:'details'
+  }])
+  const newUser={
+    "_id": user._id,
+    "name": user.name,
+    "email": user.email,
+    "phone": user.phone,
+    "avatar": user.avatar,
+    "coverImg": user.coverImg,
+    "role": user.role,
+    "location":user.location,
+    "status": user.status,
+    "hasOffer": user.hasOffer,
+    "createdAt": user.createdAt,
+    "updatedAt": user.updatedAt,
+    livrets
   }
-
-  // return data
-  return user;
+  
+  return newUser
 };
 
 const createUser = async (item: IUser) => {

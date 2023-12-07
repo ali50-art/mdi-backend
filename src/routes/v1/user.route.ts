@@ -35,6 +35,7 @@ router.post(
   UserController.forgotPassword,
 );
 router.get('/teacher/:boite',UserController.getAllTeachers)
+router.get('/teacher-student/:id',UserController.getUserById)
 router.put(
   '/reset-password/',
   validator(UserValidator.resetPasswordSchema),

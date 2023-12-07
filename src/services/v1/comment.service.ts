@@ -6,6 +6,7 @@ import { Types } from 'mongoose';
 import IReservation, { ReservationModel } from '../../database/mongodb/models/reservation.model'
 import { Order } from '../../database/mongodb/models/order.model';
 import { Disponibility } from '../../database/mongodb/models/disponibility.model';
+import { CommentModel } from '../../database/mongodb/models/comments.model';
 
 const getAll = async (role:string,category: string, page: number, pageSize: number) => {
   // create options object to filter data
@@ -59,24 +60,13 @@ const create = async (item: any) => {
   
 
   // create item
-  const createdReservation = await reservation.create(item);
-  
-  await Disponibility.findOneAndUpdate({
-    userId: new Types.ObjectId(item.teacherId),
-    start: new Date(item.start),
-    end: new Date(item.end),
-  },{
-    status:false
-  },{
-    new:true
-  })
-  const lastOrder:any=await Order.find({ studentId:item.studentId })
-  .sort({ timestamp: -1 }) 
-  .limit(1)
-
-  await Order.findByIdAndUpdate(lastOrder[0]._id,{nbHoures:lastOrder[0].nbHoures-1},{ new: true })
-  // return data
-  return createdReservation;
+  const createdComment=await CommentModel.create(item)
+  await ReservationModel.findOneAndUpdate(
+    { _id: new Types.ObjectId(item.reservationId) },
+    { $set: { isCommended: true, commentId: createdComment._id } },
+    { new: true }
+  );
+  return createdComment;
 };
 
 const edit = async (userId: Types.ObjectId, id: Types.ObjectId, item: IReservation) => {
@@ -105,8 +95,6 @@ const remove = async (userId: Types.ObjectId, id: Types.ObjectId) => {
   const options = {
     _id: id,
   };
-  
-  
 
   // get item by options
   const storedReservation:any = await reservation.getOneByQuery(options);
@@ -114,15 +102,6 @@ const remove = async (userId: Types.ObjectId, id: Types.ObjectId) => {
   if (!storedReservation) {
     throw new ErrorHandler("reservation n'exist pas!", HttpCode.NOT_FOUND);
   }
-  await Disponibility.findOneAndUpdate({
-    userId: new Types.ObjectId(storedReservation.teacherId),
-    start: new Date(storedReservation.start),
-    end: new Date(storedReservation.end),
-  },{
-    status:true
-  },{
-    new:true
-  })
   const lastOrder:any=await Order.find({ studentId:storedReservation.studentId })
   .sort({ timestamp: -1 }) 
   .limit(1)

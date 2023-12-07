@@ -4,7 +4,7 @@ import APIFeatures from '../../../utils/apiFeatures';
 import IDisponibility, { Disponibility} from '../models/disponibility.model';
 
 const getAll = async (condition: object, paging: pagingObj, query: object) => {
-  let findAllQuery = Disponibility.find({ ...condition });
+  let findAllQuery = Disponibility.find({ ...condition }).populate({path:'userId'})
 
   const features = new APIFeatures(findAllQuery, query)
     .filter()

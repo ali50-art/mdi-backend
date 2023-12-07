@@ -10,8 +10,9 @@ import { HttpCode } from '../../utils/httpCode';
 // @access  Private
 const getAll: RequestHandler = AsyncHandler(async (req: Request, res: Response): Promise<void> => {
   const { category, page, pageSize } = req?.query;
-  
+  const userRole=req.user.role
   const result = await Reservation.getAll(
+    userRole,
     req.user._id,
     Number(page || DEFAULT_CURRENT_PAGE),
     Number(pageSize || DEFAULT_PAGE_SIZE),

@@ -10,21 +10,23 @@ import { HttpCode } from '../../utils/httpCode';
 // @access  Private
 const getAll: RequestHandler = AsyncHandler(async (req: Request, res: Response): Promise<void> => {
   const { category, page, pageSize } = req?.query;
-  
+  const role=req.user.role
   const result = await Offer.getAll(
+    role,
     req.user._id,
     Number(page || DEFAULT_CURRENT_PAGE),
-    Number(pageSize || DEFAULT_PAGE_SIZE),
+    Number(1000 || DEFAULT_PAGE_SIZE),
   );
   res.status(HttpCode.OK).json({ success: true, message: '', data: result });
 });
 const getAllByTeacherId: RequestHandler = AsyncHandler(async (req: Request, res: Response): Promise<void> => {
     const { category, page, pageSize } = req?.query;
-    
+    const role=req.user.role
     const result = await Offer.getAll(
+      role,
       new Types.ObjectId(req.params.id),
       Number(page || DEFAULT_CURRENT_PAGE),
-      Number(pageSize || DEFAULT_PAGE_SIZE),
+      Number(1000 || DEFAULT_PAGE_SIZE),
     );
     res.status(HttpCode.OK).json({ success: true, message: '', data: result });
   });
