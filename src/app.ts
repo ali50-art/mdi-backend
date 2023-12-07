@@ -18,7 +18,8 @@ import swaggerSpec from './docs/config';
 import routes from './routes';
 import googleAuth from './routes/v1/googleAuth'
 import orderService from './services/v1/order.service'
-const stripe = require('stripe')('sk_test_51JEbHXEgJ1bLHwbDKY6j83aCHtW304qVFfICMi7zBvo0fUYmlVGI0W0E79dNFGcvFb7B8fIQx3mGOfM5A9zJ1Zfe00jH8Z46Ls')
+
+const stripe = require('stripe')(process.env.STRAIP_TOKEN)
 
 // Config Env Path
 dotenv.config();
